@@ -1,4 +1,4 @@
-// js/pages/profile.js (guest-mode)
+// js/pages/profile.js
 import { AUDIO } from "../data/audio.js";
 
 const $ = (sel) => document.querySelector(sel);
@@ -20,24 +20,30 @@ function initMobileMenu() {
 
   btn.addEventListener("click", () => {
     const open = !menu.hasAttribute("hidden");
-    if (open) {
-      menu.setAttribute("hidden", "");
-      btn.setAttribute("aria-expanded", "false");
-    } else {
-      menu.removeAttribute("hidden");
-      btn.setAttribute("aria-expanded", "true");
-    }
+    menu.toggleAttribute("hidden", open);
+    btn.setAttribute("aria-expanded", String(!open));
   });
 }
 
+function safeJsonParse(str, fallback) {
+  try {
+    const v = JSON.parse(str);
+    return v ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 function getSession() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_SESSION) || "null"); }
-  catch { return null; }
+  return safeJsonParse(localStorage.getItem(STORAGE_SESSION) || "null", null);
 }
 
 function getFavs() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_FAV) || "[]"); }
-  catch { return []; }
+  return safeJsonParse(localStorage.getItem(STORAGE_FAV) || "[]", []);
+}
+
+function setFavs(ids) {
+  localStorage.setItem(STORAGE_FAV, JSON.stringify(ids));
 }
 
 function findAudio(id) {
@@ -74,49 +80,58 @@ function setAccountUI(isLoggedIn) {
 function mountSession() {
   const s = getSession();
 
+  const pName = $("#pName");
+  const pEmail = $("#pEmail");
+  const pSince = $("#pSince");
+
   if (!s || !s.email) {
-    // Guest mode
-    $("#pName").textContent = "Guest";
-    $("#pEmail").textContent = "—";
-    $("#pSince").textContent = "—";
+    if (pName) pName.textContent = "Guest";
+    if (pEmail) pEmail.textContent = "—";
+    if (pSince) pSince.textContent = "—";
     setAccountUI(false);
     return;
   }
 
-  $("#pName").textContent = s.name || "—";
-  $("#pEmail").textContent = s.email || "—";
-  $("#pSince").textContent = s.loggedInAt ? fmtDate(s.loggedInAt) : "—";
+  if (pName) pName.textContent = s.name || "—";
+  if (pEmail) pEmail.textContent = s.email || "—";
+  if (pSince) pSince.textContent = s.loggedInAt ? fmtDate(s.loggedInAt) : "—";
   setAccountUI(true);
 }
 
 function mountListening() {
   const last = localStorage.getItem(STORAGE_LAST);
 
+  const lastPlayed = $("#lastPlayed");
+  const lastPos = $("#lastPos");
+  const resumeBtn = $("#resumeBtn");
+  const openPlayerBtn = $("#openPlayerBtn");
+
   if (!last) {
-    $("#lastPlayed").textContent = "—";
-    $("#lastPos").textContent = "—";
-    $("#resumeBtn").href = "player.html";
-    $("#openPlayerBtn").href = "player.html";
+    if (lastPlayed) lastPlayed.textContent = "—";
+    if (lastPos) lastPos.textContent = "—";
+    if (resumeBtn) resumeBtn.href = "player.html";
+    if (openPlayerBtn) openPlayerBtn.href = "player.html";
     return;
   }
 
   const a = findAudio(last);
-  $("#lastPlayed").textContent = a ? `${a.surah} • ${a.title}` : last;
+  if (lastPlayed) lastPlayed.textContent = a ? `${a.surah} • ${a.title}` : last;
 
   const pos = localStorage.getItem(STORAGE_TIME(last)) || "0";
-  $("#lastPos").textContent = fmtTime(pos);
+  if (lastPos) lastPos.textContent = fmtTime(pos);
 
   const href = `player.html?audio=${encodeURIComponent(last)}`;
-  $("#resumeBtn").href = href;
-  $("#openPlayerBtn").href = href;
+  if (resumeBtn) resumeBtn.href = href;
+  if (openPlayerBtn) openPlayerBtn.href = href;
 }
 
 function renderFavs() {
-  const favIds = getFavs();
   const grid = $("#favGrid");
   const empty = $("#favEmpty");
   const hint = $("#favHint");
+  if (!grid || !empty || !hint) return;
 
+  const favIds = getFavs();
   grid.innerHTML = "";
 
   if (!favIds.length) {
@@ -150,9 +165,11 @@ function renderFavs() {
     remove.type = "button";
     remove.className = "btn btn-outline btn-sm";
     remove.textContent = "Remove";
+
     remove.addEventListener("click", () => {
-      const next = favIds.filter((x) => x !== id);
-      localStorage.setItem(STORAGE_FAV, JSON.stringify(next));
+      const current = getFavs();              // always read latest
+      const next = current.filter((x) => x !== id);
+      setFavs(next);
       renderFavs();
     });
 
@@ -166,24 +183,47 @@ function renderFavs() {
   }
 }
 
+function broadcastAuthChange(sessionOrNull) {
+  window.dispatchEvent(new CustomEvent("auth:changed", { detail: sessionOrNull }));
+}
+
 function bindLogout() {
   const btn = $("#logoutBtn");
   if (!btn) return;
 
   btn.addEventListener("click", () => {
     localStorage.removeItem(STORAGE_SESSION);
-    // stay on profile, refresh UI into guest mode
-    mountSession();
+    window.location.href = "index.html";
   });
+}
+
+function bindSignIn() {
+  const btn = $("#signInBtn");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    window.location.href = "login.html";
+  });
+}
+
+function syncOnStorage() {
+  mountSession();
+  mountListening();
+  renderFavs();
 }
 
 function boot() {
   initYear();
   initMobileMenu();
+
   mountSession();
   mountListening();
   renderFavs();
+
   bindLogout();
+  bindSignIn();
+
+  window.addEventListener("storage", syncOnStorage);
+  window.addEventListener("auth:changed", syncOnStorage);
 
   const app = $("#downloadAppLink");
   if (app) {

@@ -7,9 +7,9 @@
   <meta name="description" content="Official digital archive for Tafsir and teachings." />
 
   <link rel="icon" href="assets/logo/favicon.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 
@@ -18,46 +18,61 @@
 
   <!-- Header -->
   <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="index.html" aria-label="Home">
-        <img class="brand-logo" src="assets/logo/logo_yellow_cropped_transparent.png" alt="Sheikh Dahiru Bauchi logo" />
-        <div class="brand-stack">
-          <span class="brand-name">SHEIKH DAHIRU BAUCHI</span>
-          <span class="brand-sub">SAUTUL ISLAM DIGITAL LEGACY</span>
-        </div>
+  <div class="container header-inner">
+    <a class="brand" href="index.html" aria-label="Home">
+      <img class="brand-logo" src="assets/logo/logo_yellow_cropped_transparent.png" alt="Sheikh Dahiru Bauchi logo" />
+      <div class="brand-stack">
+        <span class="brand-name">LISANUL FAIDATUL TIJJANI</span>
+        <span class="brand-sub">SAUTUL ISLAM DIGITAL LEGACY</span>
+      </div>
+    </a>
+
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-link" href="tafsir.html">Tafsir Library</a>
+      <a class="nav-link" href="player.html">Player</a>
+      <a class="nav-link" href="profile.html">Profile</a>
+    </nav>
+
+    <div class="nav-actions">
+      <!-- NOT logged in -->
+      <a class="btn btn-primary" id="loginNavBtn" href="login.html">Login</a>
+
+      <!-- logged in -->
+      <a class="btn btn-outline" id="profileNavBtn" href="profile.html" hidden>
+        <span id="navUserName"></span><span> Profile</span>
       </a>
 
-      <nav class="nav" aria-label="Primary">
-        <a class="nav-link" href="tafsir.html">Tafsir Library</a>
-        <a class="nav-link" href="player.html">Player</a>
-        <a class="nav-link" href="profile.html">Profile</a>
-      </nav>
-        <div class="nav-actions">
-          <a class="btn btn-primary" href="login.html">Login</a>
-
-          <button
-            class="icon-btn nav-toggle"
-            type="button"
-            aria-label="Open menu"
-            aria-expanded="false"
-            aria-controls="mobileMenu"
-          >
-            <span class="icon" aria-hidden="true">☰</span>
-          </button>
-        </div>
+      <button
+        class="icon-btn nav-toggle"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobileMenu"
+      >
+        <span class="icon" aria-hidden="true">☰</span>
+      </button>
     </div>
+  </div>
 
-    <!-- Mobile menu -->
-    <div class="mobile-menu" id="mobileMenu" hidden>
-      <div class="container mobile-menu-inner">
-        <a class="mobile-link" href="tafsir.html">Tafsir Library</a>
-        <a class="mobile-link" href="player.html">Player</a>
-        <a class="mobile-link" href="profile.html">Profile</a>
-        <a class="mobile-link" href="login.html">Login</a>
-        <a class="btn btn-primary mobile-cta" href="tafsir.html">Open Library</a>
-      </div>
+  <div class="mobile-menu" id="mobileMenu" hidden>
+    <div class="container mobile-menu-inner">
+      <a class="mobile-link" href="tafsir.html">Tafsir Library</a>
+      <a class="mobile-link" href="player.html">Player</a>
+      <a class="mobile-link" href="profile.html">Profile</a>
+
+      <!-- NOT logged in -->
+      <a class="mobile-link" id="loginNavBtnMobile" href="login.html">Login</a>
+
+      <!-- logged in -->
+      <a class="mobile-link" id="profileNavBtnMobile" href="profile.html" hidden>
+        <span id="navUserNameMobile"></span><span> Profile</span>
+      </a>
+
+      <a class="btn btn-primary mobile-cta" href="tafsir.html">Open Library</a>
     </div>
-  </header>
+  </div>
+</header>
+
 
   <!-- Main -->
   <main id="main" class="container page home-page">
@@ -74,7 +89,6 @@
           />
         </div>
 
-        <!-- Clean professional box under the image -->
         <div class="hero-card" role="note" aria-label="About this archive">
           <div class="hero-card-top">
             <span class="hero-tag">Digital Archive</span>
@@ -141,9 +155,7 @@
       <div class="overview-grid">
         <article class="card overview-card">
           <h3 class="card-title">Tafsir Library</h3>
-          <p class="muted">
-            Browse Tafsir series, filter by Surah, then select an audio to play.
-          </p>
+          <p class="muted">Browse Tafsir series, filter by Surah, then select an audio to play.</p>
           <div class="card-actions">
             <a class="btn btn-primary" href="tafsir.html">Open Library</a>
           </div>
@@ -151,9 +163,7 @@
 
         <article class="card overview-card">
           <h3 class="card-title">Player</h3>
-          <p class="muted">
-            Control playback: play/pause, seek, next/prev, speed, and playlist view.
-          </p>
+          <p class="muted">Control playback: play/pause, seek, next/prev, speed, and playlist view.</p>
           <div class="card-actions">
             <a class="btn btn-outline" href="player.html">Open Player</a>
           </div>
@@ -161,9 +171,7 @@
 
         <article class="card overview-card">
           <h3 class="card-title">Profile</h3>
-          <p class="muted">
-            View your account, bookmarks, and listening history.
-          </p>
+          <p class="muted">View your account, bookmarks, and listening history.</p>
           <div class="card-actions">
             <a class="btn btn-outline" href="profile.html">Go to Profile</a>
           </div>
@@ -171,9 +179,7 @@
 
         <article class="card overview-card">
           <h3 class="card-title">Login</h3>
-          <p class="muted">
-            Sign in to save bookmarks and sync progress across devices.
-          </p>
+          <p class="muted">Sign in to save bookmarks and sync progress across devices.</p>
           <div class="card-actions">
             <a class="btn btn-outline" href="login.html">Sign In</a>
           </div>
@@ -181,7 +187,6 @@
       </div>
     </section>
   </main>
-
 
   <!-- Footer -->
   <footer class="site-footer footer-pro">
@@ -221,6 +226,9 @@
     </div>
   </footer>
 
-  <script type="module" src="js/pages/index.js"></script>
+  <!-- Page logic -->
+<script type="module" src="js/auth-nav.js"></script>
+<script type="module" src="js/pages/index.js"></script>
+
 </body>
 </html>
